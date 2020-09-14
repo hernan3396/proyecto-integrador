@@ -6,7 +6,7 @@ import { sendTweet } from "./tweetSlice";
 function TweetForm({ history }) {
   const [text, setText] = useState("");
   const dispatch = useDispatch();
-  const error = useSelector((state) => state.user.signupError);
+  const error = useSelector((state) => state.user.sendTweetError);
 
   const handleSubmit = (e) => {
     e.preventDefault();

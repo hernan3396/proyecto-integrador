@@ -8,20 +8,43 @@ const userSlice = createSlice({
     signingUp: false,
     signupError: null,
     loggedIn: false,
+    loggingIn: false,
+    loggingError: null,
   },
   reducers: {
     signupUserStart(state, action) {
       state.signingUp = true;
+      state.loggedIn = false;
     },
     signupUserSuccess(state, action) {
       state.signingUp = false;
-      state.loggedIn = true;
+      state.loggedIn = false;
       state.signupError = null;
     },
     signupUserError(state, action) {
       state.signingUp = false;
       state.loggedIn = false;
       state.signupError = action.payload;
+    },
+    userLoginStart(state, action) {
+      state.loggingIn = true;
+      state.loggedIn = false;
+      state.loggingError = null;
+    },
+    userLoginSuccess(state, action) {
+      state.loggingIn = false;
+      state.loggedIn = true;
+      state.loggingError = null;
+    },
+    userLoginError(state, action) {
+      state.loggingIn = false;
+      state.loggedIn = false;
+      state.loggingError = action.payload;
+    },
+    userLogoutSucces(state, action) {
+      state.loggingIn = false;
+      state.loggedIn = false;
+      state.loggingError = null;
     },
   },
 });
@@ -30,6 +53,10 @@ export const {
   signupUserError,
   signupUserStart,
   signupUserSuccess,
+  userLoginStart,
+  userLoginSuccess,
+  userLoginError,
+  userLogoutSucces,
 } = userSlice.actions;
 
 export const signupUser = (user, history) => {
@@ -41,18 +68,33 @@ export const signupUser = (user, history) => {
 
       dispatch(signupUserSuccess());
 
-      // guardar en localStorage
-      localStorage.setItem("token", response.data.token);
-
       // actulizar instancia de axios
       api.defaults.headers["Authorization"] = `Bearer ${response.data.token}`;
 
-      // redireccionar a tweets
-      history.push("/tweets");
+      // redireccionar a login
+      history.push("/login");
     } catch (error) {
       dispatch(signupUserError(error.response?.data));
     }
   };
+};
+
+export const userLogin = ({ email, password }, history) => (dispatch) => {
+  dispatch(userLoginStart());
+
+  api.post("/sessions", { email, password }).then(
+    (response) => {
+      localStorage.setItem("token", response.data.token);
+      dispatch(userLoginSuccess());
+      history.push("/tweets");
+    },
+    (error) => dispatch(userLoginError(error.response?.data))
+  );
+};
+
+export const userLogout = () => (dispatch) => {
+  localStorage.removeItem("token");
+  dispatch(userLogoutSucces());
 };
 
 export default userSlice.reducer;
