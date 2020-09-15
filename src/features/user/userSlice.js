@@ -69,7 +69,7 @@ export const signupUser = (user, history) => {
       dispatch(signupUserSuccess());
 
       // actulizar instancia de axios
-      api.defaults.headers["Authorization"] = `Bearer ${response.data.token}`;
+      // api.defaults.headers["Authorization"] = `Bearer ${response.data.token}`;
 
       // redireccionar a login
       history.push("/login");
@@ -79,13 +79,17 @@ export const signupUser = (user, history) => {
   };
 };
 
-export const userLogin = ({ email, password }, history) => (dispatch) => {
+export const userLogin = ({ username, password }, history) => (dispatch) => {
   dispatch(userLoginStart());
 
-  api.post("/sessions", { email, password }).then(
+  api.post("/sessions", { username, password }).then(
     (response) => {
       localStorage.setItem("token", response.data.token);
       dispatch(userLoginSuccess());
+
+      // actulizar instancia de axios
+      api.defaults.headers["Authorization"] = `Bearer ${response.data.token}`;
+
       history.push("/tweets");
     },
     (error) => dispatch(userLoginError(error.response?.data))

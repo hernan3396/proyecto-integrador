@@ -7,14 +7,14 @@ import Loader from "react-loader-spinner";
 
 function LoginForm({ history }) {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const error = useSelector((state) => state.user.loggingError);
   const loading = useSelector((state) => state.user.loggingIn);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(userLogin({ email, password }, history));
+    dispatch(userLogin({ username, password }, history));
   };
 
   return (
@@ -25,8 +25,8 @@ function LoginForm({ history }) {
           type="text"
           placeholder="Enter email or username"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <br />
         <input
